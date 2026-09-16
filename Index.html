@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BerKahCandle - Trading Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <h1>BerKahCandle</h1>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="symbolSearch" placeholder="Cari simbol (BTCUSD, AAPL, EURUSD...)">
+            <button onclick="searchSymbol()"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="header-actions">
+            <button class="btn-timeframe" onclick="setTimeframe('1')">1</button>
+            <button class="btn-timeframe" onclick="setTimeframe('5')">5</button>
+            <button class="btn-timeframe" onclick="setTimeframe('15')">15</button>
+            <button class="btn-timeframe active" onclick="setTimeframe('60')">1H</button>
+            <button class="btn-timeframe" onclick="setTimeframe('240')">4H</button>
+            <button class="btn-timeframe" onclick="setTimeframe('D')">1D</button>
+            <button class="btn-timeframe" onclick="setTimeframe('W')">1W</button>
+        </div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Toolbar -->
+        <div class="left-toolbar" id="leftToolbar">
+            <div class="tool-group">
+                <button class="tool-btn active" onclick="setTool('cursor')" title="Cursor">
+                    <i class="fas fa-mouse-pointer"></i>
+                </button>
+                <button class="tool-btn" onclick="setTool('crosshair')" title="Crosshair">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
+            </div>
+            <div class="tool-group">
+                <button class="tool-btn" onclick="setTool('trendline')" title="Trend Line">
+                    <i class="fas fa-slash"></i>
+                </button>
+                <button class="tool-btn" onclick="setTool('horizontal')" title="Horizontal Line">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="tool-btn" onclick="setTool('vertical')" title="Vertical Line">
+                    <i class="fas fa-barcode"></i>
+                </button>
+            </div>
+            <div class="tool-group">
+                <button class="tool-btn" onclick="setTool('fibonacci')" title="Fibonacci">
+                    <i class="fas fa-chart-area"></i>
+                </button>
+                <button class="tool-btn" onclick="setTool('rectangle')" title="Rectangle">
+                    <i class="far fa-square"></i>
+                </button>
+                <button class="tool-btn" onclick="setTool('circle')" title="Circle">
+                    <i class="far fa-circle"></i>
+                </button>
+            </div>
+            <div class="tool-group">
+                <button class="tool-btn" onclick="setTool('text')" title="Text">
+                    <i class="fas fa-font"></i>
+                </button>
+                <button class="tool-btn" onclick="setTool('arrow')" title="Arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="tool-group">
+                <button class="tool-btn" onclick="toggleIndicatorsPanel()" title="Indicators">
+                    <i class="fas fa-wave-square"></i>
+                </button>
+                <button class="tool-btn" onclick="toggleSettings()" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container">
+            <div class="chart-info">
+                <span id="currentSymbol">BTC/USD</span>
+                <span id="currentPrice">--</span>
+                <span id="priceChange">--</span>
+            </div>
+            <div id="chart" class="chart"></div>
+            <div class="chart-controls">
+                <button onclick="toggleFullscreen()"><i class="fas fa-expand"></i></button>
+                <button onclick="resetChart()"><i class="fas fa-redo"></i></button>
+                <button onclick="screenshotChart()"><i class="fas fa-camera"></i></button>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel" id="rightPanel">
+            <!-- Watchlist -->
+            <div class="panel-section">
+                <h3><i class="fas fa-list"></i> Watchlist</h3>
+                <div class="watchlist" id="watchlist">
+                    <div class="watchlist-item active" onclick="loadSymbol('BTCUSD')">
+                        <span class="symbol">BTCUSD</span>
+                        <span class="price" id="price-BTCUSD">42,350.00</span>
+                        <span class="change positive" id="change-BTCUSD">+2.35%</span>
+                    </div>
+                    <div class="watchlist-item" onclick="loadSymbol('ETHUSD')">
+                        <span class="symbol">ETHUSD</span>
+                        <span class="price" id="price-ETHUSD">2,245.50</span>
+                        <span class="change positive" id="change-ETHUSD">+1.82%</span>
+                    </div>
+                    <div class="watchlist-item" onclick="loadSymbol('EURUSD')">
+                        <span class="symbol">EURUSD</span>
+                        <span class="price" id="price-EURUSD">1.0945</span>
+                        <span class="change negative" id="change-EURUSD">-0.15%</span>
+                    </div>
+                    <div class="watchlist-item" onclick="loadSymbol('GBPUSD')">
+                        <span class="symbol">GBPUSD</span>
+                        <span class="price" id="price-GBPUSD">1.2735</span>
+                        <span class="change positive" id="change-GBPUSD">+0.42%</span>
+                    </div>
+                    <div class="watchlist-item" onclick="loadSymbol('XAUUSD')">
+                        <span class="symbol">XAUUSD</span>
+                        <span class="price" id="price-XAUUSD">1,925.30</span>
+                        <span class="change negative" id="change-XAUUSD">-0.28%</span>
+                    </div>
+                    <div class="watchlist-item" onclick="loadSymbol('AAPL')">
+                        <span class="symbol">AAPL</span>
+                        <span class="price" id="price-AAPL">175.25</span>
+                        <span class="change positive" id="change-AAPL">+1.15%</span>
+                    </div>
+                    <div class="watchlist-item" onclick="loadSymbol('TSLA')">
+                        <span class="symbol">TSLA</span>
+                        <span class="price" id="price-TSLA">245.80</span>
+                        <span class="change negative" id="change-TSLA">-1.25%</span>
+                    </div>
+                    <div class="watchlist-item" onclick="loadSymbol('GOOGL')">
+                        <span class="symbol">GOOGL</span>
+                        <span class="price" id="price-GOOGL">135.50</span>
+                        <span class="change positive" id="change-GOOGL">+0.85%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicators -->
+            <div class="panel-section" id="indicatorsPanel">
+                <h3><i class="fas fa-wave-square"></i> Indicators</h3>
+                <div class="indicators-list">
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('sma20')" checked>
+                        <span>SMA (20)</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('sma50')">
+                        <span>SMA (50)</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('ema20')">
+                        <span>EMA (20)</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('ema50')">
+                        <span>EMA (50)</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('rsi')">
+                        <span>RSI (14)</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('macd')">
+                        <span>MACD</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('bollinger')">
+                        <span>Bollinger Bands</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('volume')" checked>
+                        <span>Volume</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('stochastic')">
+                        <span>Stochastic</span>
+                    </label>
+                    <label class="indicator-item">
+                        <input type="checkbox" onchange="toggleIndicator('adx')">
+                        <span>ADX</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Order Panel -->
+            <div class="panel-section">
+                <h3><i class="fas fa-exchange-alt"></i> Quick Order</h3>
+                <div class="order-panel">
+                    <div class="order-type">
+                        <button class="btn-buy" onclick="placeOrder('buy')">
+                            <i class="fas fa-arrow-up"></i> BUY
+                        </button>
+                        <button class="btn-sell" onclick="placeOrder('sell')">
+                            <i class="fas fa-arrow-down"></i> SELL
+                        </button>
+                    </div>
+                    <div class="order-inputs">
+                        <input type="number" id="orderQty" placeholder="Quantity" value="0.1" step="0.01">
+                        <input type="number" id="orderPrice" placeholder="Price">
+                    </div>
+                    <div class="order-info">
+                        <span>Leverage: <select id="leverage">
+                            <option>1x</option>
+                            <option>5x</option>
+                            <option>10x</option>
+                            <option>20x</option>
+                            <option>50x</option>
+                            <option>100x</option>
+                        </select></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Panel -->
+    <div class="bottom-panel">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('positions')">Positions</button>
+            <button class="tab" onclick="showTab('orders')">Orders</button>
+            <button class="tab" onclick="showTab('history')">History</button>
+            <button class="tab" onclick="showTab('news')">News</button>
+            <button class="tab" onclick="showTab('alerts')">Alerts</button>
+        </div>
+        <div class="tab-content">
+            <div id="positions" class="tab-pane active">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Entry</th>
+                            <th>Current</th>
+                            <th>P/L</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="positionsBody">
+                        <tr>
+                            <td>BTCUSD</td>
+                            <td class="buy">BUY</td>
+                            <td>0.5</td>
+                            <td>41,200</td>
+                            <td id="pos-current-0">42,350</td>
+                            <td class="positive" id="pos-pl-0">+$575.00</td>
+                            <td><button class="btn-close" onclick="closePosition(0)">Close</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="orders" class="tab-pane">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Type</th>
+                            <th>Side</th>
+                            <th>Price</th>
+                            <th>Size</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersBody">
+                        <tr>
+                            <td>ETHUSD</td>
+                            <td>Limit</td>
+                            <td class="buy">BUY</td>
+                            <td>2,200</td>
+                            <td>1.0</td>
+                            <td><button class="btn-cancel" onclick="cancelOrder(0)">Cancel</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="history" class="tab-pane">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Symbol</th>
+                            <th>Type</th>
+                            <th>Side</th>
+                            <th>Price</th>
+                            <th>Size</th>
+                            <th>P/L</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr>
+                            <td>2024-01-15</td>
+                            <td>BTCUSD</td>
+                            <td>Market</td>
+                            <td class="buy">BUY</td>
+                            <td>40,500</td>
+                            <td>0.3</td>
+                            <td class="positive">+$450</td>
+                        </tr>
+                        <tr>
+                            <td>2024-01-14</td>
+                            <td>EURUSD</td>
+                            <td>Limit</td>
+                            <td class="sell">SELL</td>
+                            <td>1.0950</td>
+                            <td>1000</td>
+                            <td class="negative">-$125</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="news" class="tab-pane">
+                <div class="news-list" id="newsList">
+                    <div class="news-item">
+                        <h4>Bitcoin Rallies Past $42,000 Amid ETF Optimism</h4>
+                        <p class="news-time">2 hours ago</p>
+                        <p>Cryptocurrency markets surge as institutional investors show renewed interest...</p>
+                    </div>
+                    <div class="news-item">
+                        <h4>Federal Reserve Signals Potential Rate Cuts in 2024</h4>
+                        <p class="news-time">4 hours ago</p>
+                        <p>Market analysts predict positive impact on risk assets including stocks and crypto...</p>
+                    </div>
+                    <div class="news-item">
+                        <h4>Gold Prices Stabilize Near $1,925 Support Level</h4>
+                        <p class="news-time">6 hours ago</p>
+                        <p>Technical analysis suggests potential breakout above $1,950 resistance...</p>
+                    </div>
+                </div>
+            </div>
+            <div id="alerts" class="tab-pane">
+                <div class="alerts-panel">
+                    <button class="btn-add-alert" onclick="addAlert()">+ Add Alert</button>
+                    <div class="alerts-list" id="alertsList">
+                        <div class="alert-item">
+                            <span class="alert-symbol">BTCUSD</span>
+                            <span class="alert-condition">> 43,000</span>
+                            <span class="alert-status active">Active</span>
+                            <button onclick="deleteAlert(0)">×</button>
+                        </div>
+                        <div class="alert-item">
+                            <span class="alert-symbol">ETHUSD</span>
+                            <span class="alert-condition">< 2,200</span>
+                            <span class="alert-status active">Active</span>
+                            <button onclick="deleteAlert(1)">×</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading chart data...</p>
+    </div>
+
+    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
